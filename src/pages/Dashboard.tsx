@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Home, ChevronRight } from "lucide-react";
 import { DeviceCard } from "@/components/dashboard/DeviceCard";
 import { MetricChart } from "@/components/dashboard/MetricChart";
-import { devices, deviceMetrics, generateChartData } from "@/lib/mockData";
+import { generateChartData } from "@/lib/mockData";
+import { useDevices } from "@/contexts/DeviceContext";
 
 export default function Dashboard() {
+  const { devices, getDeviceMetrics } = useDevices();
   const [currentData, setCurrentData] = useState(generateChartData("current"));
   const [voltageData, setVoltageData] = useState(generateChartData("voltage"));
 
@@ -16,6 +18,11 @@ export default function Dashboard() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Calculate average current from all devices
+  const averageCurrent = devices.length > 0 
+    ? devices.reduce((sum, device) => sum + getDeviceMetrics(device.id).current, 0) / devices.length
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -38,9 +45,15 @@ export default function Dashboard() {
         <DeviceCard
           key={device.id}
           name={device.name}
-          metrics={deviceMetrics[device.id as keyof typeof deviceMetrics]}
+          metrics={getDeviceMetrics(device.id)}
         />
       ))}
+
+      {devices.length === 0 && (
+        <div className="card-section text-center py-12">
+          <p className="text-muted-foreground">No devices added yet. Add devices from the Device page.</p>
+        </div>
+      )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
