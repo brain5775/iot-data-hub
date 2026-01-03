@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Home, ChevronRight, Plus, Info, X, Cpu } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Home, ChevronRight, Plus, Info, X, Cpu, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -137,14 +138,25 @@ export default function DevicePage() {
                     <p className="text-sm text-muted-foreground">
                       ID Device : {device.id}
                     </p>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => handleDeleteDevice(device.id)}
-                    >
-                      Delete
-                    </Button>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                      >
+                        <Link to={`/device/${device.id}`}>
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          View Details
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteDevice(device.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

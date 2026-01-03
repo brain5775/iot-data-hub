@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Index from "./pages/Index";
 import DevicePage from "./pages/Device";
+import DeviceDetailPage from "./pages/DeviceDetail";
 import HistoryPage from "./pages/History";
 import ReportPage from "./pages/Report";
 import NotFound from "./pages/NotFound";
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/device" element={<DevicePage />} />
+            <Route path="/device/:deviceId" element={<DeviceDetailPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="*" element={<NotFound />} />
