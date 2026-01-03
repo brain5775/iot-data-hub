@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Home, ChevronRight } from "lucide-react";
 import { DeviceCard } from "@/components/dashboard/DeviceCard";
 import { MetricChart } from "@/components/dashboard/MetricChart";
-import { deviceMetrics, generateChartData } from "@/lib/mockData";
+import { devices, deviceMetrics, generateChartData } from "@/lib/mockData";
 
 export default function Dashboard() {
   const [currentData, setCurrentData] = useState(generateChartData("current"));
@@ -34,7 +34,13 @@ export default function Dashboard() {
       </div>
 
       {/* Device Cards */}
-      <DeviceCard name="Generator 1" metrics={deviceMetrics.device_1} />
+      {devices.map((device) => (
+        <DeviceCard
+          key={device.id}
+          name={device.name}
+          metrics={deviceMetrics[device.id as keyof typeof deviceMetrics]}
+        />
+      ))}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
