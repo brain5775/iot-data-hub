@@ -4,11 +4,12 @@ import { Home, ChevronRight, Plus, Info, X, Cpu, ExternalLink } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { devices as initialDevices, Device } from "@/lib/mockData";
+import { Device } from "@/lib/mockData";
+import { useDevices } from "@/contexts/DeviceContext";
 import { toast } from "@/hooks/use-toast";
 
 export default function DevicePage() {
-  const [devices, setDevices] = useState<Device[]>(initialDevices);
+  const { devices, addDevice, removeDevice } = useDevices();
   const [deviceId, setDeviceId] = useState("");
   const [deviceName, setDeviceName] = useState("");
 
@@ -37,7 +38,7 @@ export default function DevicePage() {
       status: "online",
     };
 
-    setDevices([...devices, newDevice]);
+    addDevice(newDevice);
     setDeviceId("");
     setDeviceName("");
 
@@ -48,7 +49,7 @@ export default function DevicePage() {
   };
 
   const handleDeleteDevice = (id: string) => {
-    setDevices(devices.filter((d) => d.id !== id));
+    removeDevice(id);
     toast({
       title: "Deleted",
       description: "Device removed successfully",
