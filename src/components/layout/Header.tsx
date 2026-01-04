@@ -1,5 +1,6 @@
 import { Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -18,6 +19,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       </Button>
 
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         <div className="flex items-center gap-2 text-primary-foreground">
           <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">
             <User className="w-4 h-4" />
