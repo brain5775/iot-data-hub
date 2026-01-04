@@ -1,4 +1,4 @@
-import { LayoutDashboard, Cpu, History, FileText } from "lucide-react";
+import { LayoutDashboard, Cpu, History, FileText, Activity } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
@@ -15,9 +15,12 @@ export function Sidebar() {
     <aside className="w-64 min-h-screen bg-sidebar flex flex-col">
       {/* Logo */}
       <div className="p-4 border-b border-sidebar-border">
-        <h1 className="text-xl font-bold text-sidebar-foreground">
-          MQTT<span className="font-light">Monitor</span>
-        </h1>
+        <div className="flex items-center gap-2">
+          <Activity className="w-6 h-6 text-sidebar-foreground" />
+          <h1 className="text-xl font-bold text-sidebar-foreground">
+            PM<span className="font-light">Monitoring</span>
+          </h1>
+        </div>
       </div>
 
       {/* User Info */}
