@@ -105,17 +105,17 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
       {/* Fixed Toggle Button */}
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
         onClick={onToggle}
-        className={`fixed top-1/2 -translate-y-1/2 z-50 w-6 h-12 rounded-r-md bg-sidebar border border-l-0 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-300 ${
-          isCollapsed ? "left-16" : "left-64"
+        className={`fixed top-1/2 -translate-y-1/2 z-50 w-5 h-10 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-300 ${
+          isCollapsed ? "left-[52px]" : "left-[252px]"
         }`}
       >
         {isCollapsed ? (
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-3.5 h-3.5" />
         ) : (
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-3.5 h-3.5" />
         )}
       </Button>
     </aside>
