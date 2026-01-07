@@ -15,6 +15,7 @@ import HistoryPage from "./pages/History";
 import ReportPage from "./pages/Report";
 import SettingsPage from "./pages/Settings";
 import AuthPage from "./pages/Auth";
+import MqttTest from "./pages/MqttTest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<AuthPage />} />
+                <Route path="/mqtt-test" element={<MqttTest />} />
                 <Route
                   path="/*"
                   element={
