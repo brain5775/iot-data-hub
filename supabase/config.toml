@@ -1,1 +1,4 @@
 project_id = "lgvkbquekmrzwzbwdutg"
+
+[functions.mqtt-test]
+verify_jwt = false
