@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { DeviceProvider } from "@/contexts/DeviceContext";
+import { MqttProvider } from "@/contexts/MqttContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -26,8 +27,9 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <DeviceProvider>
-            <Toaster />
-            <Sonner />
+            <MqttProvider>
+              <Toaster />
+              <Sonner />
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<AuthPage />} />
@@ -52,6 +54,7 @@ const App = () => (
                 />
               </Routes>
             </BrowserRouter>
+            </MqttProvider>
           </DeviceProvider>
         </AuthProvider>
       </TooltipProvider>
