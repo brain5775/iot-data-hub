@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { DeviceProvider } from "@/contexts/DeviceContext";
-import { MqttProvider } from "@/contexts/MqttContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -16,7 +15,6 @@ import HistoryPage from "./pages/History";
 import ReportPage from "./pages/Report";
 import SettingsPage from "./pages/Settings";
 import AuthPage from "./pages/Auth";
-import MqttTest from "./pages/MqttTest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,13 +25,11 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <DeviceProvider>
-            <MqttProvider>
-              <Toaster />
-              <Sonner />
+            <Toaster />
+            <Sonner />
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<AuthPage />} />
-                <Route path="/mqtt-test" element={<MqttTest />} />
                 <Route
                   path="/*"
                   element={
@@ -54,7 +50,6 @@ const App = () => (
                 />
               </Routes>
             </BrowserRouter>
-            </MqttProvider>
           </DeviceProvider>
         </AuthProvider>
       </TooltipProvider>

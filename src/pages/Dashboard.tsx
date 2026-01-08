@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { Home, ChevronRight, TrendingUp } from "lucide-react";
 import { DeviceCard } from "@/components/dashboard/DeviceCard";
 import { useDevices } from "@/contexts/DeviceContext";
-import { MqttConnectionPanel } from "@/components/mqtt/MqttConnectionPanel";
-import { LiveSensorDisplay } from "@/components/mqtt/LiveSensorDisplay";
-import { SensorHistoryChart } from "@/components/mqtt/SensorHistoryChart";
 import {
   LineChart,
   Line,
@@ -73,19 +70,6 @@ export default function Dashboard() {
           <span className="text-foreground">Dashboard</span>
         </div>
       </div>
-
-      {/* MQTT Connection & Live Data */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-1">
-          <MqttConnectionPanel />
-        </div>
-        <div className="lg:col-span-2">
-          <LiveSensorDisplay />
-        </div>
-      </div>
-
-      {/* Sensor History Charts */}
-      <SensorHistoryChart />
 
       {devices.length === 0 && (
         <div className="card-section text-center py-12">
