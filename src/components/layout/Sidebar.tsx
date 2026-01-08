@@ -1,4 +1,4 @@
-import { LayoutDashboard, Cpu, History, FileText, Activity, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Cpu, History, FileText, Activity, Settings, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,17 +14,39 @@ const navItems = [
 interface SidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
+  isMobileOpen: boolean;
+  onMobileToggle: () => void;
 }
 
-export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
+export function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileToggle }: SidebarProps) {
   const location = useLocation();
 
   return (
-    <aside
-      className={`relative min-h-screen bg-sidebar flex flex-col transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-    >
+    <>
+      {/* Mobile hamburger button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onMobileToggle}
+        className="fixed top-4 left-4 z-50 md:hidden"
+      >
+        {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </Button>
+
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
+          onClick={onMobileToggle}
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 h-screen bg-sidebar flex flex-col transition-all duration-300 ease-in-out z-40
+          ${isCollapsed ? "w-16" : "w-64"}
+          ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
       {/* Logo */}
       <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
         <div className="flex items-center gap-2 overflow-hidden">
@@ -103,12 +125,12 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Fixed Toggle Button */}
+      {/* Fixed Toggle Button - hidden on mobile */}
       <Button
         variant="outline"
         size="icon"
         onClick={onToggle}
-        className={`fixed top-1/2 -translate-y-1/2 z-50 w-5 h-10 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-300 ${
+        className={`fixed top-1/2 -translate-y-1/2 z-50 w-5 h-10 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-300 hidden md:flex ${
           isCollapsed ? "left-[52px]" : "left-[252px]"
         }`}
       >
@@ -119,5 +141,6 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         )}
       </Button>
     </aside>
+    </>
   );
 }
