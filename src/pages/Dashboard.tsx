@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Home, ChevronRight, TrendingUp } from "lucide-react";
+import { Home, ChevronRight, TrendingUp, Wifi, WifiOff } from "lucide-react";
 import { DeviceCard } from "@/components/dashboard/DeviceCard";
 import { useDevices } from "@/contexts/DeviceContext";
+import { Badge } from "@/components/ui/badge";
 import {
   LineChart,
   Line,
@@ -13,7 +14,7 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-  const { devices, getDeviceMetrics } = useDevices();
+  const { devices, getDeviceMetrics, mqttConnected, mqttError } = useDevices();
   const [chartData, setChartData] = useState<Record<string, { current: Array<{ time: string; value: number }>; voltage: Array<{ time: string; value: number }> }>>({});
 
   const generateDeviceChartData = (deviceId: string, metricKey: "current" | "voltage") => {
@@ -63,11 +64,27 @@ export default function Dashboard() {
           <h1 className="page-title">Dashboard</h1>
           <p className="page-subtitle">Control panel</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Home className="w-4 h-4" />
-          <span>Home</span>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-foreground">Dashboard</span>
+        <div className="flex items-center gap-4">
+          {/* MQTT Status Indicator */}
+          <Badge variant={mqttConnected ? "default" : "secondary"} className="flex items-center gap-1.5">
+            {mqttConnected ? (
+              <>
+                <Wifi className="w-3 h-3" />
+                <span>Live</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="w-3 h-3" />
+                <span>{mqttError ? "Error" : "Connecting..."}</span>
+              </>
+            )}
+          </Badge>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Home className="w-4 h-4" />
+            <span>Home</span>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-foreground">Dashboard</span>
+          </div>
         </div>
       </div>
 

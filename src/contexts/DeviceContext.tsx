@@ -1,20 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { Device, devices as initialDevices } from "@/lib/mockData";
-
-interface DeviceMetrics {
-  current: number;
-  voltage: number;
-  frequency: number;
-  power: number;
-  energy: number;
-  powerFactor: number;
-}
+import { useMqtt, DeviceMetrics } from "@/hooks/useMqtt";
 
 interface DeviceContextType {
   devices: Device[];
   addDevice: (device: Device) => void;
   removeDevice: (id: string) => void;
   getDeviceMetrics: (id: string) => DeviceMetrics;
+  mqttConnected: boolean;
+  mqttError: string | null;
 }
 
 const defaultMetrics: DeviceMetrics = {
@@ -31,6 +25,14 @@ const DeviceContext = createContext<DeviceContextType | undefined>(undefined);
 export function DeviceProvider({ children }: { children: ReactNode }) {
   const [devices, setDevices] = useState<Device[]>(initialDevices);
 
+  // Generate MQTT topics based on device IDs
+  const topics = devices.map((d) => `devices/${d.id}/metrics`);
+
+  const { connected, error, messages } = useMqtt({
+    topics,
+    enabled: true,
+  });
+
   const addDevice = (device: Device) => {
     setDevices((prev) => [...prev, device]);
   };
@@ -40,7 +42,12 @@ export function DeviceProvider({ children }: { children: ReactNode }) {
   };
 
   const getDeviceMetrics = (id: string): DeviceMetrics => {
-    // Generate random metrics for each device
+    // Return real-time MQTT data if available
+    if (messages[id]) {
+      return messages[id].metrics;
+    }
+
+    // Fallback to mock data if not connected
     const seed = id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return {
       current: Math.round((seed % 20) * 10) / 10,
@@ -53,7 +60,16 @@ export function DeviceProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <DeviceContext.Provider value={{ devices, addDevice, removeDevice, getDeviceMetrics }}>
+    <DeviceContext.Provider
+      value={{
+        devices,
+        addDevice,
+        removeDevice,
+        getDeviceMetrics,
+        mqttConnected: connected,
+        mqttError: error,
+      }}
+    >
       {children}
     </DeviceContext.Provider>
   );
