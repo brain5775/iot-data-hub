@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { MqttTopicSettings } from "@/components/settings/MqttTopicSettings";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -68,11 +69,14 @@ export default function Settings() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Manage your account preferences</p>
+          <p className="page-subtitle">Manage your account and device preferences</p>
         </div>
       </div>
 
       <div className="grid gap-6 max-w-2xl">
+        {/* MQTT Topic Configuration */}
+        <MqttTopicSettings />
+
         {/* Profile Information */}
         <Card>
           <CardHeader>
