@@ -2,6 +2,7 @@ export interface Device {
   id: string;
   name: string;
   status: "online" | "offline";
+  mqttTopic?: string;
 }
 
 export interface HistoryRecord {
@@ -25,8 +26,8 @@ export interface HistoryRecord {
 }
 
 export const devices: Device[] = [
-  { id: "device_1", name: "Generator 1", status: "online" },
-  { id: "device_2", name: "Generator 2", status: "online" },
+  { id: "device_1", name: "Generator 1", status: "online", mqttTopic: "devices/device_1/metrics" },
+  { id: "device_2", name: "Generator 2", status: "online", mqttTopic: "devices/device_2/metrics" },
 ];
 
 export const deviceMetrics = {
