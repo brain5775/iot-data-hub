@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { Device, devices as initialDevices } from "@/lib/mockData";
-import { useMqtt, DeviceMetrics } from "@/hooks/useMqtt";
+import { useMqtt, DeviceMetrics, MqttHistoryEntry } from "@/hooks/useMqtt";
 
 interface DeviceContextType {
   devices: Device[];
@@ -10,6 +10,9 @@ interface DeviceContextType {
   getDeviceMetrics: (id: string) => DeviceMetrics;
   mqttConnected: boolean;
   mqttError: string | null;
+  mqttHistory: MqttHistoryEntry[];
+  getDeviceHistory: (deviceId: string) => MqttHistoryEntry[];
+  clearMqttHistory: () => void;
 }
 
 const defaultMetrics: DeviceMetrics = {
@@ -46,9 +49,10 @@ export function DeviceProvider({ children }: { children: ReactNode }) {
   // Generate MQTT topics based on device configuration
   const topics = devices.map((d) => d.mqttTopic || `devices/${d.id}/metrics`);
 
-  const { connected, error, messages } = useMqtt({
+  const { connected, error, messages, history, getDeviceHistory, clearHistory } = useMqtt({
     topics,
     enabled: true,
+    historyLimit: 100,
   });
 
   // Save topics to localStorage when devices change
@@ -108,6 +112,9 @@ export function DeviceProvider({ children }: { children: ReactNode }) {
         getDeviceMetrics,
         mqttConnected: connected,
         mqttError: error,
+        mqttHistory: history,
+        getDeviceHistory,
+        clearMqttHistory: clearHistory,
       }}
     >
       {children}

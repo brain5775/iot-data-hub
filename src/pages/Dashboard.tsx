@@ -3,6 +3,7 @@ import { Home, ChevronRight, TrendingUp, Wifi, WifiOff } from "lucide-react";
 import { DeviceCard } from "@/components/dashboard/DeviceCard";
 import { useDevices } from "@/contexts/DeviceContext";
 import { Badge } from "@/components/ui/badge";
+import { MqttMessageHistory } from "@/components/mqtt/MqttMessageHistory";
 import {
   LineChart,
   Line,
@@ -14,7 +15,7 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-  const { devices, getDeviceMetrics, mqttConnected, mqttError } = useDevices();
+  const { devices, getDeviceMetrics, mqttConnected, mqttError, mqttHistory, clearMqttHistory } = useDevices();
   const [chartData, setChartData] = useState<Record<string, { current: Array<{ time: string; value: number }>; voltage: Array<{ time: string; value: number }> }>>({});
 
   const generateDeviceChartData = (deviceId: string, metricKey: "current" | "voltage") => {
@@ -143,6 +144,9 @@ export default function Dashboard() {
           )}
         </div>
       ))}
+
+      {/* MQTT Message History */}
+      <MqttMessageHistory history={mqttHistory} onClear={clearMqttHistory} />
     </div>
   );
 }

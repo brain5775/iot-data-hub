@@ -11,21 +11,28 @@ export interface DeviceMetrics {
   powerFactor: number;
 }
 
-interface MqttMessage {
+export interface MqttMessage {
   deviceId: string;
   metrics: DeviceMetrics;
   timestamp: string;
+  topic: string;
+}
+
+export interface MqttHistoryEntry extends MqttMessage {
+  id: string;
 }
 
 interface UseMqttOptions {
   topics: string[];
   enabled?: boolean;
+  historyLimit?: number;
 }
 
-export function useMqtt({ topics, enabled = true }: UseMqttOptions) {
+export function useMqtt({ topics, enabled = true, historyLimit = 50 }: UseMqttOptions) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Record<string, MqttMessage>>({});
+  const [history, setHistory] = useState<MqttHistoryEntry[]>([]);
   const clientRef = useRef<MqttClient | null>(null);
 
   const connect = useCallback(async () => {
@@ -74,22 +81,38 @@ export function useMqtt({ topics, enabled = true }: UseMqttOptions) {
         try {
           const message = JSON.parse(payload.toString());
           const deviceId = topic.split("/")[1] || topic;
+          const timestamp = new Date().toISOString();
           
+          const mqttMessage: MqttMessage = {
+            deviceId,
+            topic,
+            metrics: {
+              current: message.current ?? message.I ?? 0,
+              voltage: message.voltage ?? message.V ?? 0,
+              frequency: message.frequency ?? message.F ?? 50,
+              power: message.power ?? message.P ?? 0,
+              energy: message.energy ?? message.E ?? 0,
+              powerFactor: message.powerFactor ?? message.PF ?? 0,
+            },
+            timestamp,
+          };
+
+          // Update latest message
           setMessages((prev) => ({
             ...prev,
-            [deviceId]: {
-              deviceId,
-              metrics: {
-                current: message.current ?? message.I ?? 0,
-                voltage: message.voltage ?? message.V ?? 0,
-                frequency: message.frequency ?? message.F ?? 50,
-                power: message.power ?? message.P ?? 0,
-                energy: message.energy ?? message.E ?? 0,
-                powerFactor: message.powerFactor ?? message.PF ?? 0,
-              },
-              timestamp: new Date().toISOString(),
-            },
+            [deviceId]: mqttMessage,
           }));
+
+          // Add to history
+          const historyEntry: MqttHistoryEntry = {
+            ...mqttMessage,
+            id: `${deviceId}-${timestamp}-${Math.random().toString(36).slice(2, 9)}`,
+          };
+
+          setHistory((prev) => {
+            const updated = [historyEntry, ...prev];
+            return updated.slice(0, historyLimit);
+          });
         } catch (e) {
           console.error("Failed to parse MQTT message:", e);
         }
@@ -111,7 +134,7 @@ export function useMqtt({ topics, enabled = true }: UseMqttOptions) {
       console.error("MQTT connection error:", err);
       setError(err instanceof Error ? err.message : "Connection failed");
     }
-  }, [enabled, topics]);
+  }, [enabled, topics, historyLimit]);
 
   const disconnect = useCallback(() => {
     if (clientRef.current) {
@@ -120,6 +143,14 @@ export function useMqtt({ topics, enabled = true }: UseMqttOptions) {
       setConnected(false);
     }
   }, []);
+
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+  }, []);
+
+  const getDeviceHistory = useCallback((deviceId: string) => {
+    return history.filter((entry) => entry.deviceId === deviceId);
+  }, [history]);
 
   useEffect(() => {
     if (enabled) {
@@ -135,6 +166,9 @@ export function useMqtt({ topics, enabled = true }: UseMqttOptions) {
     connected,
     error,
     messages,
+    history,
+    getDeviceHistory,
+    clearHistory,
     reconnect: connect,
   };
 }
